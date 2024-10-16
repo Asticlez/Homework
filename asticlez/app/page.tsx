@@ -21,7 +21,6 @@ export default function Home() {
       <br />
       
       {<Footer/>}
-      abs
     
     </div>)
 }
