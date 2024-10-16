@@ -123,7 +123,7 @@ export default function Main() {
           <button onClick={handleAddInstrument} className="view-all hover:bg-indigo-700">+ Add Instrument</button>
         </div>
       </div>
-
+      git init
       <div className="game-grid">
         {instrumentsList.map((instrument, index) => (
           <div key={index} className="game-card">
