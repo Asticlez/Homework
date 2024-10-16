@@ -1,6 +1,7 @@
 .container {
   width: 90%;
   margin: auto;
+  padding: 20px;
 }
 
 .header {
@@ -8,6 +9,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  color: #1a237e;
 }
 
 .view-all {
@@ -29,8 +31,10 @@ button:hover {
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Smaller grid item width */
-  gap: 15px; /* Adjusted gap for a more compact layout */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  background-color: white; /* Change from black to white */
+  padding: 20px;
 }
 
 .game-card {
@@ -41,6 +45,7 @@ button:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
   margin: 10px;
+  color: #333;
 }
 
 .game-card:hover {
@@ -119,13 +124,21 @@ button:hover {
 
 /* Main.css */
 
-input[type="search"] {
-  width: 100%;
-  max-width: 380px; /* Limit the maximum width */
+input[type="text"], input[type="search"] {
+  color: #000; /* Change text color in the search box */
+}
+
+/* Optional: Style the placeholder text */
+input[type="text"]::placeholder, input[type="search"]::placeholder {
+  color: #999; /* Customize placeholder text color */
 }
 
 @media (max-width: 768px) {
   input[type="search"] {
     width: 100%; /* Full width on smaller screens */
   }
+}
+
+body {
+  background-color: white; /* Set page background color */
 }
