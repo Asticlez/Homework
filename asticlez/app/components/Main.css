@@ -1,0 +1,131 @@
+.container {
+  width: 90%;
+  margin: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.view-all {
+  padding: 10px 20px;
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 20px; /* Keep the rounded corners for buttons */
+  cursor: pointer;
+}
+
+button {
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #4b5563; 
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Smaller grid item width */
+  gap: 15px; /* Adjusted gap for a more compact layout */
+}
+
+.game-card {
+  border: 1px solid #ccc;
+  border-radius: 8px; /* Keep rounded corners for cards */
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  margin: 10px;
+}
+
+.game-card:hover {
+  transform: translateY(-10px);
+}
+
+.game-image {
+  width: 100%;
+  height: 250px; /* Adjust the height to your preference */
+  object-fit: cover; /* Ensures the image covers the area while maintaining aspect ratio */
+  border-radius: 8px; /* Optional: adds rounded corners */
+}
+
+.game-center {
+  display: block;
+  margin: 0 auto;
+}
+
+.game-details {
+  padding: 10px;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.price-tag {
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 0.9rem; 
+}
+
+.discount-price {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 1rem; /* Adjust font size */
+}
+
+.like-section {
+  display: flex;
+  flex-direction: column; /* Stack like button and likes count */
+  align-items: center; /* Center align */
+  gap: 5px; /* Add space between button and likes count */
+}
+
+.like-button {
+  padding: 5px 10px;
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.like-button:active {
+  background-color: #4a5568; /* Darker shade for click feedback */
+  transform: scale(0.95); /* Slight shrinking effect */
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a202c; 
+  color: #fff;
+  padding: 20px; /* Reduced padding for a more compact look */
+  border-radius: 0; /* No rounded corners */
+  margin: 0; /* Reset margin to avoid any spacing */
+  position: relative; /* If needed, to manage positioning */
+}
+
+/* Main.css */
+
+input[type="search"] {
+  width: 100%;
+  max-width: 380px; /* Limit the maximum width */
+}
+
+@media (max-width: 768px) {
+  input[type="search"] {
+    width: 100%; /* Full width on smaller screens */
+  }
+}
