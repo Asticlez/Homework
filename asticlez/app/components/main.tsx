@@ -221,7 +221,7 @@ export default function Main() {
           />
           <button
             type="submit"
-            className="p-2 bg-green-500 text-white rounded"
+            className="p-2 bg-red-500 text-white rounded"
           >
             Add
           </button>
