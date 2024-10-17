@@ -1,0 +1,9 @@
+<button
+  className="view-details-button"
+  onClick={() => {
+    console.log("Instrument ID: ", instrument.id); // Log the instrument ID
+    router.push(`/product/${instrument.id}`);
+  }}
+>
+  View Details
+</button>

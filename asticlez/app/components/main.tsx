@@ -1,154 +1,280 @@
-"use client";
-import React, { useState } from 'react';
-import './Main.css';
+"use client"; // Add this line at the top to mark the component as a Client Component
 
-const instruments = [
+import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // Update the import to use next/navigation
+import "./Main.css";
+
+const initialInstruments = [
   {
-    name: 'Acoustic Guitars',
+    id: 1,
+    name: "Acoustic Guitars",
     price: 210,
     original_price: 630,
-    image_url: 'https://th.yamaha.com/en/files/product_thumb_fg800_0e49b530e9cdad5d518808c174e29492.jpg?impolicy=resize&imwid=735&imhei=735',
+    image_url: "https://th.yamaha.com/en/files/product_thumb_fg800_0e49b530e9cdad5d518808c174e29492.jpg?impolicy=resize&imwid=735&imhei=735",
     is_new: false,
     likes: 1578,
   },
   {
-    name: 'Electric Guitars',
+    id: 2,
+    name: "Electric Guitars",
     price: 875,
-    image_url: 'https://yamaha.ndcdn.in/media/catalog/product/cache/9e0f31af0cdc06df956748b13dabad87/p/a/pacs_12m_black_front_0001.jpg',
+    image_url: "https://yamaha.ndcdn.in/media/catalog/product/cache/9e0f31af0cdc06df956748b13dabad87/p/a/pacs_12m_black_front_0001.jpg",
     is_new: false,
     likes: 2300,
   },
   {
-    name: 'Bass Guitars',
+    id: 3,
+    name: "Bass Guitars",
     price: 1155,
-    image_url: 'https://i5.walmartimages.com/seo/Costway-Black-Full-Size-4-String-Electric-Bass-Guitar-with-Strap-Guitar-Bag-Amp-Cord_896a667c-f1ae-4dd0-a501-438e0ccda5d6_1.ff1dafdfb447715aa4315e6fd34a0400.jpeg',
+    image_url: "https://i5.walmartimages.com/seo/Costway-Black-Full-Size-4-String-Electric-Bass-Guitar-with-Strap-Guitar-Bag-Amp-Cord_896a667c-f1ae-4dd0-a501-438e0ccda5d6_1.ff1dafdfb447715aa4315e6fd34a0400.jpeg",
     is_new: false,
     likes: 99999999,
   },
   {
-    name: 'Digital Pianos/Keyboards',
+    id: 4,
+    name: "Digital Pianos/Keyboards",
     price: 470,
     original_price: 1470,
-    image_url: 'https://musicspace.co.th/wp-content/uploads/2017/04/kurzweil_cup2_electric-piano.jpg',
+    image_url: "https://musicspace.co.th/wp-content/uploads/2017/04/kurzweil_cup2_electric-piano.jpg",
     is_new: false,
     likes: 655,
   },
   {
-    name: 'Drum Sets',
+    id: 5,
+    name: "Drum Sets",
     price: 105.5,
     original_price: 1015,
-    image_url: 'https://th.yamaha.com/en/files/Image-index_LCHO_1080x1080_da372253d5402fff26f65cb70f769c67.jpg?impolicy=resize&imwid=396&imhei=396',
+    image_url: "https://th.yamaha.com/en/files/Image-index_LCHO_1080x1080_da372253d5402fff26f65cb70f769c67.jpg?impolicy=resize&imwid=396&imhei=396",
     is_new: false,
     likes: 0,
   },
   {
-    name: 'Ukuleles',
+    id: 6,
+    name: "Ukuleles",
     price: 1206,
-    image_url: 'https://marcato.co.th/wp-content/uploads/2020/07/Maestro_Ukulele_US-10.jpg',
+    image_url: "https://marcato.co.th/wp-content/uploads/2020/07/Maestro_Ukulele_US-10.jpg",
     is_new: false,
     likes: 1,
   },
   {
-    name: 'Saxophone',
+    id: 7,
+    name: "Saxophone",
     price: 1680,
-    image_url: 'https://th.yamaha.com/th/files/yts-62_bc0ccc376eb4879487e6a061ea5db9f8.jpg?impolicy=resize&imwid=396&imhei=396',
+    image_url: "https://th.yamaha.com/th/files/yts-62_bc0ccc376eb4879487e6a061ea5db9f8.jpg?impolicy=resize&imwid=396&imhei=396",
     is_new: false,
     likes: 728,
   },
   {
-    name: 'Trumpet',
+    id: 8,
+    name: "Trumpet",
     price: 550,
     original_price: 770,
-    image_url: 'https://media.musicarts.com/is/image/MMGS7/463676000420000-01-720x720.jpg',
+    image_url: "https://media.musicarts.com/is/image/MMGS7/463676000420000-01-720x720.jpg",
     is_new: false,
     likes: 3125,
   },
   {
-    name: 'Clarinet',
+    id: 9,
+    name: "Clarinet",
     price: 365,
     original_price: 1365,
-    image_url: 'https://ralamusic.com/wp-content/uploads/2018/05/golden-cup-clarinet-JYCL1301-01.jpg',
+    image_url: "https://ralamusic.com/wp-content/uploads/2018/05/golden-cup-clarinet-JYCL1301-01.jpg",
     is_new: false,
     likes: 700,
   },
   {
-    name: 'Violin',
+    id: 10,
+    name: "Violin",
     price: 1085,
-    image_url: 'https://www.theeramusic.com/wp-content/uploads/2021/11/MV014E-.F.jpg',
+    image_url: "https://www.theeramusic.com/wp-content/uploads/2021/11/MV014E-.F.jpg",
     is_new: false,
     likes: 80,
   },
 ];
 
 export default function Main() {
-  const [instrumentsList, setInstrumentsList] = useState(instruments);
+  const router = useRouter();
+  const [instruments, setInstruments] = useState<Instrument[]>(initialInstruments);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleLike = (index) => {
-    const newLikes = [...instrumentsList];
-    newLikes[index].likes += 1;
-    setInstrumentsList(newLikes);
-  };
+  // New state for handling the input of a new instrument
+  const [newInstrument, setNewInstrument] = useState<Instrument>({
+    id: 0, // Temporary ID
+    name: "",
+    price: 0,
+    image_url: "",
+    original_price: undefined,
+    is_new: false,
+    likes: 0,
+  });
 
-  const handleAddInstrument = () => {
-    const name = prompt('Enter the instrument name:');
-    if (!name) return; // If the user cancels or enters nothing
+  // Handle form submission to add a new instrument
+  const handleAddInstrument = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { name, price, image_url, original_price } = newInstrument;
 
-    const priceInput = prompt('Enter the instrument price:');
-    const price = parseFloat(priceInput);
-    if (isNaN(price) || price < 0) {
-      alert('Please enter a valid price.'); // Notify user of invalid price
-      return; 
+    if (name && price && image_url) {
+      setInstruments((prevInstruments) => [
+        ...prevInstruments,
+        {
+          ...newInstrument,
+          id: prevInstruments.length + 1, // Assign a unique ID
+          price: Number(price),
+          original_price: original_price ? Number(original_price) : undefined,
+          likes: 0,
+        },
+      ]);
+      // Clear the form after adding the instrument
+      setNewInstrument({
+        id: 0,
+        name: "",
+        price: 0,
+        image_url: "",
+        original_price: undefined,
+        is_new: false,
+        likes: 0,
+      });
     }
-
-    const image_url = prompt('Enter the image URL:');
-    if (!image_url) return; // If the user cancels or enters nothing
-
-    const newInstrument = {
-      name,
-      price,
-      image_url,
-      is_new: true,
-      likes: 0, // Starting likes for a new instrument
-    };
-
-    setInstrumentsList((prev) => [...prev, newInstrument]);
   };
+
+  // Function to handle "Like" button click
+  const handleLike = (index: number) => {
+    const updatedInstruments = [...instruments];
+    updatedInstruments[index] = {
+      ...updatedInstruments[index],
+      likes: updatedInstruments[index].likes + 1,
+    };
+    setInstruments(updatedInstruments);
+  };
+
+  // Function to delete an instrument
+  const handleDelete = (id: number) => {
+    setInstruments((prevInstruments) =>
+      prevInstruments.filter((instrument) => instrument.id !== id)
+    );
+  };
+
+  // Filter instruments based on search term
+  const filteredInstruments = instruments.filter((instrument) =>
+    instrument.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <main className="container">
-      <div className="header flex justify-between items-center">
-        <h2>Trending Instruments</h2>
-        <div className="flex gap-4">
-          <button className="view-all hover:bg-indigo-700">View All</button>
-          <button onClick={handleAddInstrument} className="view-all hover:bg-indigo-700">+ Add Instrument</button>
+      {/* Search and Filter Input */}
+      <input
+        type="text"
+        placeholder="Search Instruments..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="search-bar border border-black rounded p-2 mb-4" // Added styles for the search bar
+      />
+
+      {/* Add New Instrument Form */}
+      <form onSubmit={handleAddInstrument} className="mb-4">
+        <h3 className="text-xl font-bold text-black">Add New Instrument</h3> {/* Set text color to black */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Name"
+            value={newInstrument.name}
+            onChange={(e) =>
+              setNewInstrument({ ...newInstrument, name: e.target.value })
+            }
+            className="flex-1 p-2 border border-black rounded"
+            required
+          />
+          <input
+            type="number"
+            placeholder="Price"
+            value={newInstrument.price || ""}
+            onChange={(e) =>
+              setNewInstrument({ ...newInstrument, price: Number(e.target.value) })
+            }
+            className="flex-1 p-2 border border-black rounded text-blue-600" // Added blue text color for price input
+            required
+          />
+          <input
+            type="text"
+            placeholder="Image URL"
+            value={newInstrument.image_url}
+            onChange={(e) =>
+              setNewInstrument({
+                ...newInstrument,
+                image_url: e.target.value,
+              })
+            }
+            className="flex-1 p-2 border border-black rounded"
+            required
+          />
+          <input
+            type="number"
+            placeholder="Original Price (optional)"
+            value={newInstrument.original_price || ""}
+            onChange={(e) =>
+              setNewInstrument({
+                ...newInstrument,
+                original_price: Number(e.target.value),
+              })
+            }
+            className="flex-1 p-2 border border-black rounded text-red-600" // Added red text color for original price input
+          />
+          <button
+            type="submit"
+            className="p-2 bg-green-500 text-white rounded"
+          >
+            Add
+          </button>
+        </div>
+      </form>
+
+      {/* Display Instruments */}
+      <div className="game-grid">
+  {filteredInstruments.map((instrument, index) => (
+    <div key={instrument.id} className="game-card">
+      <img
+        src={instrument.image_url}
+        alt={instrument.name}
+        className="game-image"
+      />
+      <div className="game-details flex items-center justify-between m-5">
+        <div>
+          {instrument.original_price ? (
+            <div className="price-tag">
+              <span className="original-price text-red-500">${instrument.original_price}</span>
+              <span className="current-price">${instrument.price}</span>
+            </div>
+          ) : (
+            <span className="price-tag">${instrument.price}</span>
+          )}
+          <h2>{instrument.name}</h2>
+          <span className="likes">Likes: {instrument.likes}</span>
+        </div>
+        <div className="buttons flex flex-col">
+          <button
+            className="like-button"
+            onClick={() => handleLike(index)}
+          >
+            Like
+          </button>
+          <button
+            className="delete-button"
+            onClick={() => handleDelete(instrument.id)}
+          >
+            Delete
+          </button>
+          {/* View Details Button */}
+          <button
+  className="view-details-button"
+  onClick={() => router.push(`/product/${instrument.id}`)} // This should direct to /product/{id}
+>
+  View Details
+</button>
         </div>
       </div>
-      <div className="game-grid">
-        {instrumentsList.map((instrument, index) => (
-          <div key={index} className="game-card">
-            <img src={instrument.image_url} alt={instrument.name} className="game-image" />
-
-            <div className="game-details flex items-center justify-between m-5">
-              <div>
-                {instrument.original_price ? (
-                  <div className="price-tag">
-                    <span className="original-price">${instrument.original_price}</span>
-                    <span className="discount-price">${instrument.price}</span>
-                  </div>
-                ) : (
-                  <span className="price">${instrument.price}</span>
-                )}
-                <h3>{instrument.name}</h3>
-              </div>
-
-              <div className="like-section">
-                <button onClick={() => handleLike(index)} className="like-button">Like</button>
-                <span>{instrument.likes} Likes</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+    </div>
+  ))}
+</div>
     </main>
   );
 }

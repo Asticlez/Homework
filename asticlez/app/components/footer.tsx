@@ -1,14 +1,14 @@
-import React from 'react'
+import React from 'react';
 import './Main.css';
 
-type Props = {}
+type Props = {};
 
 export default function Footer({}: Props) {
   return (
     <footer>
-        <div className='footer'>
+      <div className='footer'>
         © 2024 Music Shop All Rights Reserved.
-        </div>
+      </div>
     </footer>
-  )
+  );
 }
