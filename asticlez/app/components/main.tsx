@@ -112,7 +112,22 @@ export default function Main() {
   const [editingInstrumentId, setEditingInstrumentId] = useState<number | null>(null);
 
   const handleAddInstrument = (e: React.FormEvent) => {
-    // Your add instrument logic...
+    e.preventDefault(); // Prevent form submission
+    // Logic to add a new instrument...
+    if (newInstrument.name && newInstrument.price && newInstrument.image_url) {
+      const newInstrumentData = { ...newInstrument, id: instruments.length + 1 }; // Generate new ID
+      setInstruments([...instruments, newInstrumentData]);
+      // Resetting the form
+      setNewInstrument({
+        id: 0,
+        name: "",
+        price: 0,
+        image_url: "",
+        original_price: undefined,
+        is_new: false,
+        likes: 0,
+      });
+    }
   };
 
   const handleEditInstrument = (e: React.FormEvent) => {
@@ -149,6 +164,7 @@ export default function Main() {
 
   const handleDelete = (id: number) => {
     // Your delete logic...
+    setInstruments(instruments.filter(instrument => instrument.id !== id));
   };
 
   const handleEditClick = (instrument: Instrument) => {
