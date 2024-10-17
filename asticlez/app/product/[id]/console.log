@@ -7,3 +7,46 @@
 >
   View Details
 </button>
+
+{/* Edit Button */}
+<button 
+  className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600" 
+  onClick={() => {
+    console.log("Editing Product ID: ", instrument.id); // Log the product ID being edited
+    router.push(`/product/${instrument.id}/edit`);
+  }}
+>
+  Edit
+</button>
+
+const InstrumentCard = ({ instrument }) => {
+  const router = useRouter();
+
+  return (
+    <div className="instrument-card">
+      <h3>{instrument.name}</h3>
+      <p>Price: ${instrument.price}</p>
+      <p>{instrument.description}</p>
+
+      <button
+        className="view-details-button"
+        onClick={() => {
+          console.log("Instrument ID: ", instrument.id); // Log the instrument ID
+          router.push(`/product/${instrument.id}`);
+        }}
+      >
+        View Details
+      </button>
+
+      <button 
+        className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600" 
+        onClick={() => {
+          console.log("Editing Product ID: ", instrument.id); // Log the product ID being edited
+          router.push(`/product/${instrument.id}/edit`);
+        }}
+      >
+        Edit
+      </button>
+    </div>
+  );
+};
