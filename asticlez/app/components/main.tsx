@@ -97,6 +97,7 @@ export default function Main() {
   const [instruments, setInstruments] = useState<Instrument[]>(initialInstruments);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // New state for handling the input of a new instrument
   const [newInstrument, setNewInstrument] = useState<Instrument>({
     id: 0, // Temporary ID
     name: "",
@@ -107,17 +108,26 @@ export default function Main() {
     likes: 0,
   });
 
-  // State for handling editing
+  // Handle form submission to add a new instrument
   const [editMode, setEditMode] = useState(false);
   const [editingInstrumentId, setEditingInstrumentId] = useState<number | null>(null);
-
+  
   const handleAddInstrument = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form submission
-    // Logic to add a new instrument...
-    if (newInstrument.name && newInstrument.price && newInstrument.image_url) {
-      const newInstrumentData = { ...newInstrument, id: instruments.length + 1 }; // Generate new ID
-      setInstruments([...instruments, newInstrumentData]);
-      // Resetting the form
+    e.preventDefault();
+    const { name, price, image_url, original_price } = newInstrument;
+
+    if (name && price && image_url) {
+      setInstruments((prevInstruments) => [
+        ...prevInstruments,
+        {
+          ...newInstrument,
+          id: prevInstruments.length + 1, // Assign a unique ID
+          price: Number(price),
+          original_price: original_price ? Number(original_price) : undefined,
+          likes: 0,
+        },
+      ]);
+      // Clear the form after adding the instrument
       setNewInstrument({
         id: 0,
         name: "",
@@ -157,22 +167,32 @@ export default function Main() {
       setEditingInstrumentId(null);
     }
   };
-
+  
+  // Function to handle "Like" button click
   const handleLike = (index: number) => {
-    // Your like logic...
+    const updatedInstruments = [...instruments];
+    updatedInstruments[index] = {
+      ...updatedInstruments[index],
+      likes: updatedInstruments[index].likes + 1,
+    };
+    setInstruments(updatedInstruments);
   };
 
+  // Function to delete an instrument
   const handleDelete = (id: number) => {
-    // Your delete logic...
-    setInstruments(instruments.filter(instrument => instrument.id !== id));
+    setInstruments((prevInstruments) =>
+      prevInstruments.filter((instrument) => instrument.id !== id)
+    );
   };
 
+  // Function to handle the edit button click
   const handleEditClick = (instrument: Instrument) => {
     setNewInstrument(instrument);
     setEditMode(true);
     setEditingInstrumentId(instrument.id);
   };
 
+  // Filter instruments based on search term
   const filteredInstruments = instruments.filter((instrument) =>
     instrument.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -185,18 +205,20 @@ export default function Main() {
         placeholder="Search Instruments..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-bar border border-black rounded p-2 mb-4"
+        className="search-bar border border-black rounded p-2 mb-4" // Added styles for the search bar
       />
 
-      {/* Add/Edit Instrument Form */}
+      {/* Add New Instrument Form */}
       <form onSubmit={editMode ? handleEditInstrument : handleAddInstrument} className="mb-4">
-        <h3 className="text-xl font-bold text-black">{editMode ? "Edit Instrument" : "Add New Instrument"}</h3>
+        <h3 className="text-xl font-bold text-black">Add New Instrument</h3> {/* Set text color to black */}
         <div className="flex gap-2">
           <input
             type="text"
             placeholder="Name"
             value={newInstrument.name}
-            onChange={(e) => setNewInstrument({ ...newInstrument, name: e.target.value })}
+            onChange={(e) =>
+              setNewInstrument({ ...newInstrument, name: e.target.value })
+            }
             className="flex-1 p-2 border border-black rounded"
             required
           />
@@ -204,15 +226,22 @@ export default function Main() {
             type="number"
             placeholder="Price"
             value={newInstrument.price || ""}
-            onChange={(e) => setNewInstrument({ ...newInstrument, price: Number(e.target.value) })}
-            className="flex-1 p-2 border border-black rounded text-blue-600"
+            onChange={(e) =>
+              setNewInstrument({ ...newInstrument, price: Number(e.target.value) })
+            }
+            className="flex-1 p-2 border border-black rounded text-black" // Added blue text color for price input
             required
           />
           <input
             type="text"
             placeholder="Image URL"
             value={newInstrument.image_url}
-            onChange={(e) => setNewInstrument({ ...newInstrument, image_url: e.target.value })}
+            onChange={(e) =>
+              setNewInstrument({
+                ...newInstrument,
+                image_url: e.target.value,
+              })
+            }
             className="flex-1 p-2 border border-black rounded"
             required
           />
@@ -220,14 +249,19 @@ export default function Main() {
             type="number"
             placeholder="Original Price (optional)"
             value={newInstrument.original_price || ""}
-            onChange={(e) => setNewInstrument({ ...newInstrument, original_price: Number(e.target.value) })}
-            className="flex-1 p-2 border border-black rounded text-red-600"
+            onChange={(e) =>
+              setNewInstrument({
+                ...newInstrument,
+                original_price: e.target.value ? Number(e.target.value) : undefined,
+              })
+            }
+            className="flex-1 p-2 border border-black rounded text-black"
           />
           <button
             type="submit"
-            className="p-2 bg-red-500 text-white rounded"
+            className={`border border-black rounded p-2 ${editMode ? 'bg-green-500' : 'bg-red-500'}`} // Color changes based on edit mode
           >
-            {editMode ? "Update" : "Add"}
+            {editMode ? "Update Instrument" : "Add Instrument"}
           </button>
         </div>
       </form>
@@ -243,48 +277,24 @@ export default function Main() {
             />
             <div className="game-details flex items-center justify-between m-5">
               <div>
-                {instrument.original_price ? (
-                  <div className="price-tag">
-                    <span className="original-price text-red-500">${instrument.original_price}</span>
-                    <span className="current-price">${instrument.price}</span>
-                  </div>
-                ) : (
-                  <span className="price-tag">${instrument.price}</span>
-                )}
+                <div className="price-tag">
+                  {instrument.original_price ? (
+                    <>
+                      <span className="original-price text-black line-through">${instrument.original_price}</span>
+                      <span className="current-price text-black">${instrument.price}</span>
+                    </>
+                  ) : (
+                    <span className="current-price text-black">${instrument.price}</span>
+                  )}
+                </div>
                 <h2>{instrument.name}</h2>
                 <span className="likes">Likes: {instrument.likes}</span>
               </div>
               <div className="buttons flex flex-col">
-                <button
-                  className="like-button"
-                  onClick={() => handleLike(index)}
-                >
-                  Like
-                </button>
-                <button
-                  className="delete-button"
-                  onClick={() => handleDelete(instrument.id)}
-                >
-                  Delete
-                </button>
-                {/* Edit Button */}
-                <button
-                  className="edit-button"
-                  onClick={() => handleEditClick(instrument)}
-                >
-                  Edit
-                </button>
-                {/* View Details Button */}
-                <button
-                  className="view-details-button"
-                  onClick={() => {
-                    console.log("Instrument ID: ", instrument.id);
-                    console.log("Navigating to product details with ID:", instrument.id);
-                    router.push(`/product/${instrument.id}`);
-                  }}
-                >
-                  View Details
-                </button>
+                <button className="like-button" onClick={() => handleLike(index)}>Like</button>
+                <button className="delete-button" onClick={() => handleDelete(instrument.id)}>Delete</button>
+                <button className="edit-button" onClick={() => handleEditClick(instrument)}>Edit</button>
+                <button className="view-details-button" onClick={() => router.push(`/product/${instrument.id}`)}>View Details</button>
               </div>
             </div>
           </div>
