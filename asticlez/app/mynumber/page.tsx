@@ -16,14 +16,12 @@ export default function ParentComponent() {
         </div>
     )
 }
-
 function ShowMyNumber(
     { mynumber, changeMyNumber }:
         {
             mynumber: number,
             changeMyNumber: (newNumber: number) => void
         }
-
 ) {
     mynumber = 8;
     changeMyNumber(9)
