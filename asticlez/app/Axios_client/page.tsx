@@ -4,92 +4,104 @@ import { useEffect, useState } from "react"
 import "tailwindcss/tailwind.css";
 
 type PostType = {
-    id: number,
-    title: string,
-    content: string,
-    author: string,
-    date: string,
-    category: string, 
-}
+  id: number,
+  title: string,
+  content: string,
+  author: string,
+  date: string,
+  category: string, 
+};
 
 type PhotoType = {
-    id: number,
-    title: string,
-}
+  id: number,
+  title: string,
+};
 
 export default function Page() {
-    const [url, setUrl] = useState('')
-    const [obj, setObj] = useState<PostType[] | null>(null)
-    const [photos, setPhotos] = useState<PhotoType[]>([])
-    const [loading, setLoading] = useState(true)
+  const [url, setUrl] = useState('');
+  const [obj, setObj] = useState<PostType[] | null>(null);
+  const [photos, setPhotos] = useState<PhotoType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const userRes = await fetch("https://api.github.com/users/nikisidama")
-                const userData = await userRes.json()
-                setUrl(userData.avatar_url)
-                
-                
-                const postRes = await fetch("/api/vercel")
-                const postData = await postRes.json()
-                setObj(postData)
-                
-                const photoRes = await fetch('https://jsonplaceholder.typicode.com/photos?_limit=20')
-                const photoData = await photoRes.json()
-                setPhotos(photoData.map((photo: { id: number, title: string }) => ({
-                    id: photo.id,
-                    title: photo.title
-                })))
-            } catch (e) {
-                console.error("Error fetching data:", e)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchData()
-    }, [])
+  useEffect(() => {
+      async function fetchData() {
+          try {
+              const userRes = await fetch("https://api.github.com/users/nikisidama");
+              const userData = await userRes.json();
+              setUrl(userData.avatar_url);
+              
+              const postRes = await fetch("/api/vercel");
+              const postData = await postRes.json();
+              setObj(postData);
+              
+              const photoRes = await fetch('https://jsonplaceholder.typicode.com/photos?_limit=20');
+              const photoData = await photoRes.json();
+              setPhotos(photoData.map((photo: { id: number, title: string }) => ({
+                  id: photo.id,
+                  title: photo.title
+              })));
+          } catch (e) {
+              console.error("Error fetching data:", e);
+          } finally {
+              setLoading(false);
+          }
+      }
+      fetchData();
+  }, []);
 
-    if (loading) return (
-        <div className="flex items-center justify-center h-screen bg-black text-white">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-white"></div>
-        </div>
-    )
+  if (loading) return (
+      <div className="flex items-center justify-center h-screen bg-black text-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-white"></div>
+      </div>
+  );
 
-    return (
-        <div className="bg-black min-h-screen py-12 text-white">
-            <div className="container mx-auto px-4">
+  // Array of image URLs to cycle through
+  const imageUrls = [
+      "https://media.tenor.com/kAtdlmKDSZsAAAAM/black-black-man.gif",
+      "https://media.tenor.com/Qsc0YiF-TJIAAAAM/black-black-guy.gif",
+      "https://media.tenor.com/TiZSDQZs038AAAAM/blackmail-black.gif",
+      "https://media.tenor.com/ph2GfjU5T-IAAAAM/black-child-black.gif",
+      "https://media.tenor.com/t4UPRE5sQB0AAAAM/scream-peppermint.gif"
+      ];
 
-                <header className="text-center mb-16">
+  return (
+      <div className="bg-black min-h-screen py-12 text-white">
+          <div className="container mx-auto px-4">
+              <header className="text-center mb-16">
+                  <img src={url} alt="Avatar" className="mx-auto rounded-full w-32 h-32 mb-4" />
+                  <h1 className="text-5xl font-extrabold mb-4">Personal Information</h1>
+                  <p className="text-lg text-gray-400">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita, ullam molestias..</p>
+              </header>
 
-                    <img src={url} alt="Avatar" className="mx-auto rounded-full w-32 h-32 mb-4" />
-                    
-                    <h1 className="text-5xl font-extrabold mb-4">Personal Information</h1>
-                    <p className="text-lg text-gray-400">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita, ullam molestias..</p>
-                </header>
-                
-                <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {photos.map((photo) => {
-                        const item = obj?.find((o) => o.id === photo.id)
-                        if (!item) return null
-                        return (
-                            <div 
-                                key={photo.id} 
-                                className="relative bg-white text-black p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 group"
-                            >   <img src={url} alt="Avatar" className="mx-auto rounded-full w-32 h-32 mb-4" />
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
-                                <h2 className="text-2xl font-bold mb-2">{photo.title}</h2>
-                                <p className="text-gray-500"><strong>ID:</strong> {item.id}</p>
-                                <p className="text-gray-700 mt-2"><strong>Description:</strong> {item.content}</p>
-                                <p className="text-gray-500 mt-2"><strong>Author:</strong> {item.author}</p>
-                                <p className="text-gray-500 mt-2"><strong>Date:</strong> {item.date}</p>
-                                <p className="text-gray-500 mt-2"><strong>Category:</strong> {item.category}</p>
-                                <div className="absolute bottom-4 right-4 text-sm font-semibold text-gray-500">Learn More</div>
-                            </div>
-                        )
-                    })}
-                </section>
-            </div>
-        </div>
-    )
+              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {photos.map((photo) => {
+                      const item = obj?.find((o) => o.id === photo.id);
+                      if (!item) return null;
+
+                      // Cycle through images using modulo
+                      const imageUrl = imageUrls[photo.id % imageUrls.length];
+
+                      return (
+                          <div 
+                              key={photo.id} 
+                              className="relative bg-white text-black p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+                          >
+                              {/* Render the cycled image */}
+                              <img src={imageUrl} alt="Avatar" className="mx-auto rounded-full w-32 h-32 mb-4" />
+
+                              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
+                              <h2 className="text-2xl font-bold mb-2">{photo.title}</h2>
+                              <p className="text-gray-500"><strong>ID:</strong> {item.id}</p>
+                              <p className="text-gray-700 mt-2"><strong>Description:</strong> {item.content}</p>
+                              <p className="text-gray-500 mt-2"><strong>Author:</strong> {item.author}</p>
+                              <p className="text-gray-500 mt-2"><strong>Date:</strong> {item.date}</p>
+                              <p className="text-gray-500 mt-2"><strong>Category:</strong> {item.category}</p>
+                              <div className="absolute bottom-4 right-4 text-sm font-semibold text-gray-500">Learn More</div>
+                          </div>
+                      );
+                  })}
+              </section>
+          </div>
+      </div>
+  );
 }
