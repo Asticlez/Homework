@@ -76,7 +76,7 @@ export default function Page() {
                             <div 
                                 key={photo.id} 
                                 className="relative bg-white text-black p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 group"
-                            >
+                            >   <img src={url} alt="Avatar" className="mx-auto rounded-full w-32 h-32 mb-4" />
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-0 group-hover:opacity-40 transition-opacity duration-300"></div>
                                 <h2 className="text-2xl font-bold mb-2">{photo.title}</h2>
                                 <p className="text-gray-500"><strong>ID:</strong> {item.id}</p>
@@ -84,7 +84,6 @@ export default function Page() {
                                 <p className="text-gray-500 mt-2"><strong>Author:</strong> {item.author}</p>
                                 <p className="text-gray-500 mt-2"><strong>Date:</strong> {item.date}</p>
                                 <p className="text-gray-500 mt-2"><strong>Category:</strong> {item.category}</p>
-                                <img src={url} alt="Avatar" className="mx-auto rounded-full w-32 h-32 mb-4" />
                                 <div className="absolute bottom-4 right-4 text-sm font-semibold text-gray-500">Learn More</div>
                             </div>
                         )
