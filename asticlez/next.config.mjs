@@ -2,9 +2,9 @@
 const nextConfig = {
   images: {
     domains: [
-      'avatars.githubusercontent.com', 
-      'media1.tenor.com', 
-      'otakuepico.com' // Other valid image sources
+      'avatars.githubusercontent.com',
+      'media1.tenor.com',
+      'otakuepico.com'
     ],
   },
 };
