@@ -1,8 +1,9 @@
+// app/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
-import BookCard from '../components/BookCard'; // Correct import path
-import { fetchBooks } from '../services/bookService'; // Correct import path
+import BookCard from '../asticlez/components/BookCard';
+import { fetchBooks } from '../asticlez/services/bookService';
 
 export default function HomePage() {
   const [bookData, setBookData] = useState<
@@ -12,7 +13,7 @@ export default function HomePage() {
   useEffect(() => {
     const getBooks = async () => {
       const data = await fetchBooks();
-      setBookData(data); // This should include the image URLs from your API
+      setBookData(data);
     };
 
     getBooks();
