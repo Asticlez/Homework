@@ -1,7 +1,7 @@
 // http endpoint
 export async function GET() {
   try {
-    const response = await fetch('https://api.vercel.app/blog');
+    const response = await fetch('https://jsonplaceholder.typicode.com/users');
     const data = await response.json();
     
     return new Response(JSON.stringify(data), {
