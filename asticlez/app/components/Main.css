@@ -1,4 +1,4 @@
-/* .container {
+.container {
   width: 90%;
   margin: auto;
   padding: 20px;
@@ -122,8 +122,6 @@ button:hover {
   position: relative; /* If needed, to manage positioning */
 }
 
-/* Main.css */
-
 input[type="text"], input[type="search"] {
   color: #000; /* Change text color in the search box */
 }
@@ -143,7 +141,6 @@ body {
   background-color: white; /* Set page background color */
 }
 
-/* Main.css */
 .instrument-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -165,4 +162,4 @@ body {
 
 .price-tag, .original-price {
   font-weight: bold;
-} */
+}
