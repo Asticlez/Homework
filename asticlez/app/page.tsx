@@ -2,8 +2,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import BookCard from '../asticlez/components/BookCard';
-import { fetchBooks } from '../asticlez/services/bookService';
+import BookCard from '../../asticlez/components/BookCard'; // Corrected import path
+import { fetchBooks } from '../../asticlez/services/bookService'; // Corrected import path
 
 export default function HomePage() {
   const [bookData, setBookData] = useState<
