@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import BookCard from '../components/BookCard'; // Corrected import path
-import { fetchBooks } from '../services/bookService';
+import BookCard from '../components/BookCard'; // Correct import path
+import { fetchBooks } from '../services/bookService'; // Correct import path
 
 export default function HomePage() {
   const [bookData, setBookData] = useState<
@@ -12,7 +12,7 @@ export default function HomePage() {
   useEffect(() => {
     const getBooks = async () => {
       const data = await fetchBooks();
-      setBookData(data); // This should include the image URLs
+      setBookData(data); // This should include the image URLs from your API
     };
 
     getBooks();

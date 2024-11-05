@@ -1,13 +1,12 @@
-// components/BookCard.tsx
+// asticlez/components/BookCard.tsx
 import React from 'react';
-import BookCard from '../components/BookCard';
 
 interface BookCardProps {
   book: {
     id: number;
     title: string;
     author: string;
-    imageUrl: string; // Using image link from API
+    imageUrl: string;
   };
 }
 
@@ -15,7 +14,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
   return (
     <div className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
       <img
-        src={book.imageUrl} // Image URL from your API or mock data
+        src={book.imageUrl}
         alt={book.title}
         className="w-full h-40 object-cover rounded"
       />
