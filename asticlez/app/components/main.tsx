@@ -108,7 +108,6 @@ export default function Main() {
     likes: 0,
   });
 
-  // Handle form submission to add a new instrument
   const [editMode, setEditMode] = useState(false);
   const [editingInstrumentId, setEditingInstrumentId] = useState<number | null>(null);
   
@@ -121,13 +120,13 @@ export default function Main() {
         ...prevInstruments,
         {
           ...newInstrument,
-          id: prevInstruments.length + 1, // Assign a unique ID
+          id: prevInstruments.length + 1, 
           price: Number(price),
           original_price: original_price ? Number(original_price) : undefined,
           likes: 0,
         },
       ]);
-      // Clear the form after adding the instrument
+
       setNewInstrument({
         id: 0,
         name: "",
@@ -153,7 +152,7 @@ export default function Main() {
         )
       );
 
-      // Resetting state after editing
+      
       setNewInstrument({
         id: 0,
         name: "",
@@ -168,7 +167,7 @@ export default function Main() {
     }
   };
   
-  // Function to handle "Like" button click
+ 
   const handleLike = (index: number) => {
     const updatedInstruments = [...instruments];
     updatedInstruments[index] = {
@@ -178,28 +177,27 @@ export default function Main() {
     setInstruments(updatedInstruments);
   };
 
-  // Function to delete an instrument
+  
   const handleDelete = (id: number) => {
     setInstruments((prevInstruments) =>
       prevInstruments.filter((instrument) => instrument.id !== id)
     );
   };
 
-  // Function to handle the edit button click
+  
   const handleEditClick = (instrument: Instrument) => {
     setNewInstrument(instrument);
     setEditMode(true);
     setEditingInstrumentId(instrument.id);
   };
 
-  // Filter instruments based on search term
+  
   const filteredInstruments = instruments.filter((instrument) =>
     instrument.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <main className="container">
-      {/* Search and Filter Input */}
       <input
         type="text"
         placeholder="Search Instruments..."
@@ -266,7 +264,6 @@ export default function Main() {
         </div>
       </form>
 
-      {/* Display Instruments */}
       <div className="game-grid">
         {filteredInstruments.map((instrument, index) => (
           <div key={instrument.id} className="game-card">

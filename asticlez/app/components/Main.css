@@ -59,7 +59,7 @@ button:hover {
   border-radius: 8px; /* Optional: adds rounded corners */
 }
 
-.game-center {
+.game-center { 
   display: block;
   margin: 0 auto;
 }

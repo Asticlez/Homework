@@ -8,7 +8,7 @@ const sarabun = Sarabun({
 })
 
 export const metadata: Metadata = {
-  title: "GGEZweCOOK",
+  title: "Product List 2024",
   description: "This is my sample application",
 };
 
