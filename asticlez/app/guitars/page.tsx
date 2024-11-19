@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 
@@ -15,6 +15,7 @@ export default function GuitarPage() {
   const [brand, setBrand] = useState('');
   const [price, setPrice] = useState('');
   const [editingGuitar, setEditingGuitar] = useState<Guitar | null>(null);
+  const [notification, setNotification] = useState<string | null>(null); 
 
   useEffect(() => {
     const fetchGuitars = async () => {
@@ -46,14 +47,20 @@ export default function GuitarPage() {
       const updatedGuitar = await response.json();
       if (editingGuitar) {
         setGuitars(guitars.map((guitar) => (guitar.id === updatedGuitar.id ? updatedGuitar : guitar)));
+        setNotification('Guitar updated successfully!');
       } else {
         setGuitars([...guitars, updatedGuitar]);
+        setNotification('Guitar added successfully!');
       }
       setName('');
       setBrand('');
       setPrice('');
       setEditingGuitar(null);
+    } else {
+      setNotification('Something went wrong. Please try again.');
     }
+
+    setTimeout(() => setNotification(null), 3000); 
   };
 
   const deleteGuitar = async (id: string) => {
@@ -64,7 +71,12 @@ export default function GuitarPage() {
     });
     if (response.ok) {
       setGuitars(guitars.filter((guitar) => guitar.id !== id));
+      setNotification('Guitar deleted successfully!');
+    } else {
+      setNotification('Failed to delete guitar.');
     }
+
+    setTimeout(() => setNotification(null), 3000);
   };
 
   const startEditing = (guitar: Guitar) => {
@@ -78,7 +90,12 @@ export default function GuitarPage() {
     <div className="container mx-auto p-8 max-w-2xl bg-white min-h-screen">
       <h1 className="text-4xl font-extrabold text-center text-black mb-8">Guitar Showcase 🎸</h1>
 
-      {/* Form Section */}
+      {notification && (
+        <div className="bg-blue-500 text-white text-center py-2 mb-4 rounded-lg">
+          {notification}
+        </div>
+      )}
+
       <form onSubmit={addOrUpdateGuitar} className="bg-gray-800 shadow-md rounded-lg p-6 mb-8">
         <h2 className="text-2xl font-bold mb-4 text-white">
           {editingGuitar ? 'Edit Guitar' : 'Add a New Guitar'}
@@ -117,7 +134,6 @@ export default function GuitarPage() {
         </button>
       </form>
 
-      {/* Guitar List Section */}
       <div className="space-y-6">
         {guitars.length > 0 ? (
           guitars.map((guitar) => (
