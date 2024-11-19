@@ -1,27 +1,27 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is your Prisma schema file
+
+datasource db {
+  provider = "sqlite"  // Using SQLite as an example
+  url      = env("DATABASE_URL")  // Pulling from .env file
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-  
-model Todo {
-  id        String   @id @default(uuid())
-  title     String
-  done      Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-
 model Guitar {
-  id     String @id @default(uuid())
-  name   String
-  brand  String
-  price  Float
+  id       Int     @id @default(autoincrement())  // Use autoincremented Int ID
+  name     String
+  brand    String
+  price    Float
+  imageUrl String
 }
+
+// OR if you prefer using UUID for `id`
+// model Guitar {
+//   id       String  @id @default(uuid())  // Use UUID for the ID
+//   name     String
+//   brand    String
+//   price    Float
+//   imageUrl String
+// }

@@ -1,95 +1,60 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import fs from 'fs';
-import path from 'path';
+import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client"; // Import Prisma Client
 
-// File path for `guitar.json`
-const filePath = path.resolve(process.cwd(), 'guitar.json');
-
-// Zod Schema for Guitar Validation
-const GuitarSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  brand: z.string().min(1, "Brand is required"),
-  price: z.number().positive("Price must be a positive number"),
-});
-
-// Helper functions to read/write `guitar.json`
-const readGuitars = () => {
-  if (!fs.existsSync(filePath)) {
-    // If `guitar.json` doesn't exist, initialize it with an empty array
-    fs.writeFileSync(filePath, JSON.stringify([]));
-  }
-  const data = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(data);
-};
-
-const writeGuitars = (data: any) => {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-};
+const prisma = new PrismaClient(); // Initialize Prisma Client
 
 // GET: List all guitars
 export async function GET() {
-  const guitars = readGuitars();
-  return NextResponse.json(guitars);
+  try {
+    const guitars = await prisma.guitar.findMany(); // Fetch guitars from the database
+    return NextResponse.json(guitars);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch guitars" }, { status: 500 });
+  }
 }
 
 // POST: Add a new guitar
 export async function POST(request: Request) {
-  const { name, brand, price } = await request.json();
+  const { name, brand, price, imageUrl } = await request.json();
 
-  // Validate input with Zod
-  const validatedData = GuitarSchema.safeParse({ name, brand, price });
-  if (!validatedData.success) {
-    return NextResponse.json({ error: validatedData.error.errors }, { status: 400 });
+  try {
+    const newGuitar = await prisma.guitar.create({
+      data: { name, brand, price, imageUrl }, // Create a new guitar in the database
+    });
+
+    return NextResponse.json(newGuitar, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to add guitar" }, { status: 500 });
   }
-
-  const guitars = readGuitars();
-  const newGuitar = {
-    id: (guitars.length + 1).toString(),
-    name,
-    brand,
-    price,
-  };
-
-  guitars.push(newGuitar);
-  writeGuitars(guitars);
-
-  return NextResponse.json(newGuitar);
 }
 
 // DELETE: Delete a guitar by ID
 export async function DELETE(request: Request) {
   const { id } = await request.json();
-  let guitars = readGuitars();
-  const filteredGuitars = guitars.filter((guitar) => guitar.id !== id);
 
-  if (filteredGuitars.length === guitars.length) {
-    return NextResponse.json({ error: "Guitar not found" }, { status: 404 });
+  try {
+    const deletedGuitar = await prisma.guitar.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: "Guitar deleted successfully" });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete guitar" }, { status: 500 });
   }
-
-  writeGuitars(filteredGuitars);
-
-  return NextResponse.json({ message: "Guitar deleted successfully" });
 }
 
 // PUT: Update a guitar by ID
 export async function PUT(request: Request) {
-  const { id, name, brand, price } = await request.json();
+  const { id, name, brand, price, imageUrl } = await request.json();
 
-  // Validate input with Zod
-  const validatedData = GuitarSchema.safeParse({ name, brand, price });
-  if (!validatedData.success) {
-    return NextResponse.json({ error: validatedData.error.errors }, { status: 400 });
+  try {
+    const updatedGuitar = await prisma.guitar.update({
+      where: { id },
+      data: { name, brand, price, imageUrl },
+    });
+
+    return NextResponse.json(updatedGuitar);
+  } catch (error) {
+    return NextResponse.json({ error: "Guitar not found or update failed" }, { status: 404 });
   }
-
-  const guitars = readGuitars();
-  const guitarIndex = guitars.findIndex((guitar) => guitar.id === id);
-  if (guitarIndex === -1) {
-    return NextResponse.json({ error: "Guitar not found" }, { status: 404 });
-  }
-
-  guitars[guitarIndex] = { id, name, brand, price };
-  writeGuitars(guitars);
-
-  return NextResponse.json(guitars[guitarIndex]);
 }

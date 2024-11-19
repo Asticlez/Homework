@@ -1,163 +1,259 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Guitar {
   id: string;
   name: string;
   brand: string;
   price: number;
+  imageUrl: string;
 }
 
-export default function GuitarPage() {
+const GuitarPage = () => {
   const [guitars, setGuitars] = useState<Guitar[]>([]);
-  const [name, setName] = useState('');
-  const [brand, setBrand] = useState('');
-  const [price, setPrice] = useState('');
-  const [editingGuitar, setEditingGuitar] = useState<Guitar | null>(null);
-  const [notification, setNotification] = useState<string | null>(null); 
+  const [name, setName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [price, setPrice] = useState<number | "">("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [editGuitar, setEditGuitar] = useState<Guitar | null>(null);
 
+  // Fetch guitars from the API
   useEffect(() => {
     const fetchGuitars = async () => {
-      const response = await fetch('/api/guitars');
+      const response = await fetch("/api/guitars");
       const data = await response.json();
       setGuitars(data);
     };
     fetchGuitars();
   }, []);
 
-  const addOrUpdateGuitar = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Add a new guitar
+  const addGuitar = async () => {
+    if (!name || !brand || !price || !imageUrl) {
+      toast.error("Please fill out all fields!");
+      return;
+    }
+    const newGuitar = { name, brand, price: Number(price), imageUrl };
 
-    const url = '/api/guitars';
-    const method = editingGuitar ? 'PUT' : 'POST';
+    const response = await fetch("/api/guitars", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newGuitar),
+    });
 
-    const response = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: editingGuitar?.id,
-        name,
-        brand,
-        price: parseFloat(price),
-      }),
+    if (response.ok) {
+      const addedGuitar = await response.json();
+      setGuitars((prev) => [...prev, addedGuitar]);
+      toast.success("Guitar added successfully!");
+      setName("");
+      setBrand("");
+      setPrice("");
+      setImageUrl("");
+    } else {
+      const error = await response.json();
+      toast.error(error.message || "Failed to add guitar!");
+    }
+  };
+
+  // Delete a guitar
+  const deleteGuitar = async (id: string) => {
+    const response = await fetch("/api/guitars", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (response.ok) {
+      setGuitars((prev) => prev.filter((guitar) => guitar.id !== id));
+      toast.success("Guitar deleted successfully!");
+    } else {
+      toast.error("Failed to delete guitar!");
+    }
+  };
+
+  // Filter guitars based on the search query
+  const filteredGuitars = guitars.filter((guitar) =>
+    guitar.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    guitar.brand.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Edit Guitar functionality
+  const editGuitarDetails = (guitar: Guitar) => {
+    setEditGuitar(guitar);
+  };
+
+  const saveChanges = async () => {
+    if (!editGuitar) return;
+    const { id, name, brand, price, imageUrl } = editGuitar;
+    const response = await fetch(`/api/guitars`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, name, brand, price: Number(price), imageUrl }),
     });
 
     if (response.ok) {
       const updatedGuitar = await response.json();
-      if (editingGuitar) {
-        setGuitars(guitars.map((guitar) => (guitar.id === updatedGuitar.id ? updatedGuitar : guitar)));
-        setNotification('Guitar updated successfully!');
-      } else {
-        setGuitars([...guitars, updatedGuitar]);
-        setNotification('Guitar added successfully!');
-      }
-      setName('');
-      setBrand('');
-      setPrice('');
-      setEditingGuitar(null);
+      setGuitars((prev) =>
+        prev.map((guitar) =>
+          guitar.id === updatedGuitar.id ? updatedGuitar : guitar
+        )
+      );
+      toast.success("Guitar updated successfully!");
+      setEditGuitar(null);
     } else {
-      setNotification('Something went wrong. Please try again.');
+      toast.error("Failed to update guitar!");
     }
-
-    setTimeout(() => setNotification(null), 3000); 
   };
 
-  const deleteGuitar = async (id: string) => {
-    const response = await fetch('/api/guitars', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
-    });
-    if (response.ok) {
-      setGuitars(guitars.filter((guitar) => guitar.id !== id));
-      setNotification('Guitar deleted successfully!');
-    } else {
-      setNotification('Failed to delete guitar.');
-    }
-
-    setTimeout(() => setNotification(null), 3000);
-  };
-
-  const startEditing = (guitar: Guitar) => {
-    setName(guitar.name);
-    setBrand(guitar.brand);
-    setPrice(guitar.price.toString());
-    setEditingGuitar(guitar);
+  const cancelEdit = () => {
+    setEditGuitar(null);
   };
 
   return (
-    <div className="container mx-auto p-8 max-w-2xl bg-white min-h-screen">
-      <h1 className="text-4xl font-extrabold text-center text-black mb-8">Guitar Showcase 🎸</h1>
+    <div className="min-h-screen bg-gradient-to-b from-red-700 to-black text-white p-5">
+      <ToastContainer />
+      <h1 className="text-4xl font-bold text-center mb-8">Music Shop</h1>
+      <p className="text-center text-xl mb-6">The Best Place for Musical Instruments</p>
 
-      {notification && (
-        <div className="bg-blue-500 text-white text-center py-2 mb-4 rounded-lg">
-          {notification}
-        </div>
-      )}
+      {/* Search Bar */}
+      <div className="max-w-2xl mx-auto mb-8">
+        <input
+          type="text"
+          placeholder="Search for your favorite instrument"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full p-3 border rounded-md text-black mb-4"
+        />
+      </div>
 
-      <form onSubmit={addOrUpdateGuitar} className="bg-gray-800 shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4 text-white">
-          {editingGuitar ? 'Edit Guitar' : 'Add a New Guitar'}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+      {/* Add New Guitar */}
+      <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-md shadow-md mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Add a New Guitar</h2>
+        <div className="grid grid-cols-4 gap-4 mb-4">
           <input
             type="text"
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring focus:border-blue-500 bg-gray-700 text-white"
-            required
+            className="p-2 border border-gray-300 rounded-md text-black"
           />
           <input
             type="text"
             placeholder="Brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
-            className="border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring focus:border-blue-500 bg-gray-700 text-white"
-            required
+            className="p-2 border border-gray-300 rounded-md text-black"
           />
           <input
             type="number"
             placeholder="Price"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring focus:border-blue-500 bg-gray-700 text-white"
-            required
+            onChange={(e) => setPrice(Number(e.target.value))}
+            className="p-2 border border-gray-300 rounded-md text-black"
+          />
+          <input
+            type="url"
+            placeholder="Image URL"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className="p-2 border border-gray-300 rounded-md text-black"
           />
         </div>
         <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-300"
+          onClick={addGuitar}
+          className="w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-md"
         >
-          {editingGuitar ? 'Update Guitar' : 'Add Guitar'}
+          Add Guitar
         </button>
-      </form>
+      </div>
 
-      <div className="space-y-6">
-        {guitars.length > 0 ? (
-          guitars.map((guitar) => (
+      {/* Edit Guitar (if editing a guitar) */}
+      {editGuitar && (
+        <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-md shadow-md mb-8">
+          <h2 className="text-2xl font-semibold mb-4">Edit Guitar: {editGuitar.name}</h2>
+          <div className="grid grid-cols-4 gap-4 mb-4">
+            <input
+              type="text"
+              value={editGuitar.name}
+              onChange={(e) =>
+                setEditGuitar({ ...editGuitar, name: e.target.value })
+              }
+              className="p-2 border border-gray-300 rounded-md text-black"
+            />
+            <input
+              type="text"
+              value={editGuitar.brand}
+              onChange={(e) =>
+                setEditGuitar({ ...editGuitar, brand: e.target.value })
+              }
+              className="p-2 border border-gray-300 rounded-md text-black"
+            />
+            <input
+              type="number"
+              value={editGuitar.price}
+              onChange={(e) =>
+                setEditGuitar({ ...editGuitar, price: Number(e.target.value) })
+              }
+              className="p-2 border border-gray-300 rounded-md text-black"
+            />
+            <input
+              type="url"
+              value={editGuitar.imageUrl}
+              onChange={(e) =>
+                setEditGuitar({ ...editGuitar, imageUrl: e.target.value })
+              }
+              className="p-2 border border-gray-300 rounded-md text-black"
+            />
+          </div>
+          <button
+            onClick={saveChanges}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-md mb-4"
+          >
+            Save Changes
+          </button>
+          <button
+            onClick={cancelEdit}
+            className="w-full bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-md"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Guitar List */}
+      <div className="max-w-4xl mx-auto">
+        {filteredGuitars.length > 0 ? (
+          filteredGuitars.map((guitar) => (
             <div
               key={guitar.id}
-              className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6 transform transition hover:scale-105"
+              className="flex items-center justify-between bg-gray-800 p-4 rounded-md shadow-md mb-4"
             >
-              <h2 className="text-2xl font-semibold text-white">{guitar.name}</h2>
-              <p className="text-gray-400">
-                Brand: <span className="font-medium">{guitar.brand}</span>
-              </p>
-              <p className="text-gray-400">
-                Price: <span className="font-medium">${guitar.price.toFixed(2)}</span>
-              </p>
-              <div className="flex space-x-4 mt-4">
+              <div className="flex items-center">
+                <img
+                  src={guitar.imageUrl}
+                  alt={guitar.name}
+                  className="w-16 h-16 object-cover rounded-md mr-4"
+                />
+                <div>
+                  <h3 className="text-lg font-bold">{guitar.name}</h3>
+                  <p>Brand: {guitar.brand}</p>
+                  <p>Price: ${guitar.price}</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
                 <button
-                  onClick={() => startEditing(guitar)}
-                  className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
+                  onClick={() => editGuitarDetails(guitar)}
                 >
                   Edit
                 </button>
                 <button
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
                   onClick={() => deleteGuitar(guitar.id)}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg"
                 >
                   Delete
                 </button>
@@ -165,9 +261,11 @@ export default function GuitarPage() {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center">No guitars found. Start adding some!</p>
+          <p className="text-center text-gray-400">No guitars found.</p>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default GuitarPage;

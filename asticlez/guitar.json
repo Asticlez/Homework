@@ -3,18 +3,21 @@
     "id": "1",
     "name": "Fender Stratocaster",
     "brand": "Fender",
-    "price": 1200.5
+    "price": 1200.5,
+    "imageUrl": "https://www.bigtone.in.th/wp-content/uploads/2018/09/FD-PLY-Strat-3TS-MN-1.jpg"
   },
   {
     "id": "2",
     "name": "Gibson Les Paul",
     "brand": "Gibson",
-    "price": 1500
+    "price": 1500,
+    "imageUrl": "https://www.bigtone.in.th/wp-content/uploads/2019/11/GS-STD50-LP-HCB-01.jpg"
   },
   {
     "id": "3",
-    "name": "Ibanez RGS",
+    "name": "Ibanez RG",
     "brand": "Ibanez",
-    "price": 1200
+    "price": 1200,
+    "imageUrl": "https://www.musicarms.net/wp-content/uploads/2015/06/Face-cover-Ibanez-RG870Z.jpg"
   }
 ]
