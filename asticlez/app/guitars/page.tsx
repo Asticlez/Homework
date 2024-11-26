@@ -21,7 +21,7 @@ const GuitarPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [editGuitar, setEditGuitar] = useState<Guitar | null>(null);
 
-  // Fetch guitars from the API
+  // Fetch guitars from the API, so จำไว้
   useEffect(() => {
     const fetchGuitars = async () => {
       const response = await fetch("/api/guitars");
@@ -31,7 +31,7 @@ const GuitarPage = () => {
     fetchGuitars();
   }, []);
 
-  // Add a new guitar
+  // Add a new guitar, ok?
   const addGuitar = async () => {
     if (!name || !brand || !price || !imageUrl) {
       toast.error("Please fill out all fields!");
@@ -75,13 +75,13 @@ const GuitarPage = () => {
     }
   };
 
-  // Filter guitars based on the search query
+  // Filter guitars based on the search query so that you are not cooked
   const filteredGuitars = guitars.filter((guitar) =>
     guitar.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     guitar.brand.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Edit Guitar functionality
+  // This make Edit Guitar functionality na krub
   const editGuitarDetails = (guitar: Guitar) => {
     setEditGuitar(guitar);
   };
@@ -130,7 +130,7 @@ const GuitarPage = () => {
         />
       </div>
 
-      {/* Add New Guitar */}
+      //Add new Guitar Section//
       <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-md shadow-md mb-8">
         <h2 className="text-2xl font-semibold mb-4">Add a New Guitar</h2>
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -171,7 +171,7 @@ const GuitarPage = () => {
         </button>
       </div>
 
-      {/* Edit Guitar (if editing a guitar) */}
+      //Section for Guitar Editing//
       {editGuitar && (
         <div className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-md shadow-md mb-8">
           <h2 className="text-2xl font-semibold mb-4">Edit Guitar: {editGuitar.name}</h2>
@@ -224,7 +224,7 @@ const GuitarPage = () => {
         </div>
       )}
 
-      {/* Guitar List */}
+      //Guitar List now remember wai na//
       <div className="max-w-4xl mx-auto">
         {filteredGuitars.length > 0 ? (
           filteredGuitars.map((guitar) => (
