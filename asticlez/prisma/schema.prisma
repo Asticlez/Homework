@@ -1,27 +1,28 @@
-// This is your Prisma schema file
-
-datasource db {
-  provider = "sqlite"  // Using SQLite as an example
-  url      = env("DATABASE_URL")  // Pulling from .env file
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
 }
 
-model Guitar {
-  id       Int     @id @default(autoincrement())  // Use autoincremented Int ID
-  name     String
-  brand    String
-  price    Float
-  imageUrl String
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
-// OR if you prefer using UUID for `id`
-// model Guitar {
-//   id       String  @id @default(uuid())  // Use UUID for the ID
-//   name     String
-//   brand    String
-//   price    Float
-//   imageUrl String
-// }
+model Guitar {
+  id     String @id @default(uuid())  
+  name   String
+  brand  String
+  price  Float
+  likeScore Int @default(0)
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  createdAt DateTime @default(now())
+}
