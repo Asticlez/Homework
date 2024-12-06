@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client"; // Import Prisma Client
-
-const prisma = new PrismaClient(); // Initialize Prisma Client
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/app/utils/db";
 
 // GET: List all guitars
 export async function GET() {
@@ -18,8 +17,12 @@ export async function GET() {
 export async function POST(request: Request) {
   const { name, brand, price, imageUrl } = await request.json();
 
+  // Validate input
   if (!name || !brand || !price) {
     return NextResponse.json({ error: "Name, brand, and price are required" }, { status: 400 });
+  }
+  if (isNaN(price) || price <= 0) {
+    return NextResponse.json({ error: "Price must be a positive number" }, { status: 400 });
   }
 
   try {
@@ -44,8 +47,12 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   const { id, name, brand, price, imageUrl } = await request.json();
 
+  // Validate input
   if (!id || !name || !brand || !price) {
     return NextResponse.json({ error: "ID, name, brand, and price are required" }, { status: 400 });
+  }
+  if (isNaN(price) || price <= 0) {
+    return NextResponse.json({ error: "Price must be a positive number" }, { status: 400 });
   }
 
   try {
@@ -70,6 +77,7 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   const { id } = await request.json();
 
+  // Validate input
   if (!id) {
     return NextResponse.json({ error: "ID is required" }, { status: 400 });
   }
@@ -90,6 +98,7 @@ export async function DELETE(request: Request) {
 export async function PATCH(request: Request) {
   const { id } = await request.json();
 
+  // Validate input
   if (!id) {
     return NextResponse.json({ error: "ID is required" }, { status: 400 });
   }
